@@ -1,0 +1,9 @@
+## Interface: 30300
+## Title: LowDPS - Shame Alert
+## Notes: Warns you with a message and sound when you die last in DPS inside an instance. Requires Details!
+## Author: Marco
+## Version: 1.0.0
+## Dependencies: Details
+## SavedVariables: LowDPSDB
+
+LowDPS.lua
