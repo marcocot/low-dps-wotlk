@@ -8,6 +8,40 @@ local ADDON_NAME = "LowDPS"
 local SOUND_FILE = "Interface\\AddOns\\LowDPS\\Sounds\\low_dps.ogg"
 local FALLBACK_SOUND = "Sound\\Interface\\RaidWarning.wav"
 
+-- Random insults in Foggiano dialect and Italian
+local INSULTS = {
+    -- Foggiano dialect
+    "Ma che stè a fà? Piglia 'a scopa ca faje cchiù danne!",
+    "Si proprije 'nu scurnuse, DPS d'a maronna!",
+    "Uè, ma tu staje durmenno? Mòvet!",
+    "Pare ca staje a jucà cu li pìede! Vergògnet!",
+    "Ma addò vaje cu stu DPS? Arròbbe a mammt!",
+    "Si cchiù lìende d'a morte! Mòvet, scurnacchiate!",
+    "Madonna, si proprije 'na chiaveca! Fatte 'nu favore e lassa stà!",
+    "Uè cafone! Pùre 'nu mob fa cchiù DPS 'e te!",
+    "Ma quale DPS, tu staje a fà 'nu picnic!",
+    "Si proprije 'nu pòvere criste, scàreca 'a tastiera!",
+    "Uè, ma 'a connessione toje arriva cu li picciune?",
+    "Si cchiù scarze d'u prìevete quanne jòche a pallone!",
+    -- Italian
+    "Ma giochi con i piedi? Fai piu' danno a stare fermo!",
+    "Mio nonno col bastone fa piu' DPS di te!",
+    "Hai le mani di ricotta! Svegliati!",
+    "Ma stai giocando o stai dormendo?!",
+    "Il tank fa piu' danno di te... vergognati!",
+    "Con questo DPS e' meglio se vai a fare la spesa!",
+    "Hai sbagliato gioco, torna a giocare a briscola!",
+    "Pure l'healer fa piu' danno di te, svergognato!",
+    "Ma la tastiera ce l'hai o stai giocando col pensiero?",
+    "Con sto DPS manco un coniglio livello 1 lo ammazzi!",
+    "Complimenti, hai battuto il record... del DPS piu' basso della storia!",
+    "Il tuo DPS e' cosi' basso che i mob ti ignorano per pena!",
+}
+
+local function GetRandomInsult()
+    return INSULTS[math.random(#INSULTS)]
+end
+
 -- Saved variables defaults
 local defaults = {
     enabled = true,
@@ -157,11 +191,10 @@ local function ShowWarning(playerPos, totalPlayers, playerDPS)
 
     -- On-screen message
     if LowDPSDB.messageEnabled then
+        local insult = GetRandomInsult()
+
         WarningText:SetText("HAI UN DPS TROPPO BASSO!")
-        DetailText:SetText(string.format(
-            "Rank %d of %d  —  DPS: %s",
-            playerPos, totalPlayers, FormatDPS(playerDPS)
-        ))
+        DetailText:SetText(insult)
 
         WarningFrame:SetAlpha(1)
         WarningFrame:Show()
@@ -174,12 +207,15 @@ local function ShowWarning(playerPos, totalPlayers, playerDPS)
         FlashFadeGroup:Stop()
         FlashFadeGroup:Play()
 
-        -- Chat message
+        -- Chat messages
         DEFAULT_CHAT_FRAME:AddMessage(
             string.format(
                 "|cFFFF3333[LowDPS]|r HAI UN DPS TROPPO BASSO! Rank |cFFFF6600%d|r of %d (DPS: |cFFFFCC00%s|r)",
                 playerPos, totalPlayers, FormatDPS(playerDPS)
             )
+        )
+        DEFAULT_CHAT_FRAME:AddMessage(
+            string.format("|cFFFF3333[LowDPS]|r |cFFFFAAAA%s|r", insult)
         )
     end
 
@@ -228,6 +264,7 @@ LowDPS:SetScript("OnEvent", function(self, event, arg1)
             end
         end
 
+        math.randomseed(time())
         DEFAULT_CHAT_FRAME:AddMessage("|cFF00CC66[LowDPS]|r Addon loaded! Type |cFFFFCC00/lowdps|r for options.")
 
     elseif event == "PLAYER_DEAD" then
